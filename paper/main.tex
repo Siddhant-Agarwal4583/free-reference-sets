@@ -1,0 +1,36 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,bm}
+\usepackage{graphicx,booktabs,multirow,xcolor}
+\usepackage{algorithm,algpseudocode}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+\usepackage{caption}\captionsetup{font=small}
+\newtheorem{proposition}{Proposition}
+\newtheorem{assumption}{Assumption}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Acc}{\mathrm{Acc}}
+\newcommand{\oob}{\mathrm{OOB}}
+
+\title{Free Reference Sets: Label-Free Accuracy Estimation under Distribution Shift for Bagged Ensembles via Size-Extrapolated Out-of-Bag Scores}
+\author{Siddhant Agarwal\\ Independent Researcher\\ ORCID: \href{https://orcid.org/0009-0004-7658-2091}{0009-0004-7658-2091}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\noindent\textbf{Keywords:} distribution shift; performance estimation without labels; random forests; out-of-bag estimation; model monitoring; importance weighting
+
+\input{sec_intro_method}
+\input{sec_experiments}
+\input{sec_results}
+\input{sec_discussion}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+\input{appendix}
+\end{document}

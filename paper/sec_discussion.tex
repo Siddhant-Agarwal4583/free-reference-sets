@@ -1,0 +1,35 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{Practical recommendations.}
+For practitioners who deploy bagged tree ensembles and must monitor them without labels, the results support three rules:
+(1) do not carve out a holdout reference set; use OOB predictions instead;
+(2) use OOB-DoC-X as a general default and OOB-IW when the shift is believed to keep the source support, where it was the most accurate estimator on real data; avoid ATC when target corruption is possible, since it failed badly under real-data corruption;
+(3) never use raw average confidence. Random forests are strongly under-confident \citep{niculescu2005probs}, and AC underestimated accuracy, on average by 4.5--23\,pp, in every experiment and shift type.
+The method needs no additional model fitting except the domain classifier for IW. For $n=1000$, $n_Q=2000$ and $T=200$ on a single CPU core, our unoptimized implementation computes all naive and extrapolated confidence-based estimators in 0.76\,s, compared with 0.41\,s to fit the forest; the IW domain classifier adds 1.4\,s.
+
+\paragraph{Why the free reference set wins.}
+Two effects act together. The reference set is five times larger, which reduces the variance of every reference-set statistic. It is most important for IW, whose effective sample size is further reduced by the weights. Meanwhile the deployed model is better, which matters most at small $n$. Proposition~\ref{prop:oob} and Figure~\ref{fig:mech}(a) show that the price, a model mismatch, is entirely an ensemble-size effect. That effect is predictable and correctable.
+
+\paragraph{Relation to disagreement-based estimation.}
+Disagreement-based estimators \citep{jiang2022gde,baek2022aotl} also exploit the randomness of training, but they require independently trained models and calibration assumptions on the ensemble. Our approach is complementary: it uses the bagging randomness to obtain held-out \emph{labels} for free and leaves the choice of estimator open. Combining OOB reference sets with agreement-on-the-line style estimators is a natural next step.
+
+\paragraph{Limitations.}
+We state the limitations plainly.
+\emph{(i) Real-data scale.} The real-data evaluation covers the 72 datasets of OpenML-CC18 with 3 seeds each and source samples capped at 2{,}000 points. Larger datasets, where a 20\% holdout is already big, would likely show smaller gains, consistent with the size trend in Section~\ref{sec:openml}.
+\emph{(ii) Shift realism.} The shifts are controlled and synthetic: PCA-based sub-population selection, Gaussian corruption, and Dirichlet label shift. Natural temporal and geographic shifts, as in Folktables \citep{ding2021folktables}, may behave differently.
+\emph{(iii) Scope of models.} The method applies only to bagged ensembles; boosting does not produce OOB predictions of the same kind. Bagged neural networks or bagged gradient boosting would fall within scope but were not evaluated.
+\emph{(iv) Extrapolation under shift.} Correcting the size bias is not always beneficial for plain and IW estimators under shift (Table~\ref{tab:x}). The $1/m$ law is an assumption that we verified empirically, not a theorem for all estimator families.
+\emph{(v) Concept shift.} Like all label-free methods, ours cannot detect changes in $p(y\mid x)$ that leave the covariates and confidences unchanged.
+\emph{(vi) Metrics.} We studied accuracy only; extensions to AUROC and F1, as in PAPE \citep{bialek2025pape}, are straightforward, since any reference-set estimator can be fed OOB scores.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Label-free performance estimation under distribution shift has relied on labeled reference sets that cost training data. For bagged ensembles this cost is unnecessary: the out-of-bag sample is an exact held-out reference sample, but for a smaller ensemble. Once this size mismatch is understood, it can be corrected with size-matched, $1/m$-extrapolated estimators. In a pre-registered study of 5{,}212 tasks, including all 72 datasets of OpenML-CC18, the free reference set reduced estimation error in every estimator family and every experiment, by 5--21\% on real data and up to 40\% on synthetic data, while also yielding a more accurate deployed model. The gains are largest for small datasets, which is exactly where carving out a holdout set hurts most, and smallest under corruption shift, where the estimators' own assumptions, not the reference set, limit accuracy. Since random forests remain among the most widely deployed models for tabular data, this is a zero-cost improvement to how such models can be monitored in the field.
+
+\paragraph{Reproducibility.}
+All code (estimators, shift generators, experiment runners, analysis and figure scripts), the pre-registered hypotheses and all raw per-task results are provided as supplementary material and will be released publicly upon publication. Every number in this paper is produced by the released analysis scripts.
+
+\paragraph{Declaration of generative AI and AI-assisted technologies in the manuscript preparation process.}
+During the preparation of this work the author used Claude Sonnet 5 to edit the manuscript to improve readability. After using this tool/service, the author reviewed and edited the content as needed and take full responsibility for the content of the published article.

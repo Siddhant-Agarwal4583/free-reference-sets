@@ -1,0 +1,115 @@
+\section{Introduction}
+\label{sec:intro}
+
+A model deployed in the field is almost never evaluated on data drawn from its training distribution. Covariates drift, sub-populations change, sensors degrade, and class priors move \citep{rabanser2019failing}. Ground-truth labels for the deployment data, however, typically arrive late, are expensive, or never arrive at all. This has motivated a growing literature on \emph{label-free accuracy estimation}: predicting the accuracy of a fixed classifier on an unlabeled target sample. Representative methods include the difference of confidences (DoC) \citep{guillory2021doc}, average thresholded confidence (ATC) \citep{garg2022atc}, importance-weighted validation \citep{sugiyama2007iwcv}, model disagreement \citep{jiang2022gde,baek2022aotl}, and, for tabular data, the recent probabilistic adaptive performance estimation (PAPE) \citep{bialek2025pape}.
+
+Almost all of these methods share a requirement that is easy to overlook: a \emph{labeled reference set} drawn from the source distribution and \emph{not used for training}. ATC learns its threshold on it, DoC subtracts its confidence, importance weighting averages its losses, and PAPE fits its calibrator on it. In practice the reference set is carved out of the training data, which creates a dilemma. A large reference set makes the estimate reliable but makes the deployed model worse. A small reference set keeps the model strong but makes the estimate noisy. The dilemma is sharpest exactly where it matters most: small or medium tabular datasets, in which tree ensembles remain the method of choice \citep{grinsztajn2022tabular}.
+
+This paper observes that, for bagged ensembles such as random forests \citep{breiman2001rf}, the dilemma is avoidable. Each training point is left out of roughly $e^{-1}\approx 37\%$ of the bootstrap samples, so the out-of-bag (OOB) prediction for every training point is a genuine held-out prediction \citep{breiman1996oob}. The entire training set can therefore serve as a labeled reference set \emph{at no cost}, and the deployed model can be trained on all available data. OOB predictions are routinely used to estimate in-distribution error, but to our knowledge they have not been used as the reference sample for estimating accuracy under distribution shift.
+
+Plugging OOB predictions into existing estimators is not quite enough, however. We show that an OOB prediction is a valid held-out prediction of a \emph{different}, smaller model: a sub-ensemble of $\approx T/e$ trees, not the $T$-tree ensemble that is actually deployed (Proposition~\ref{prop:oob}). Both the accuracy and the confidence distribution of a sub-ensemble differ systematically from those of the full ensemble, so the naive plug-in is biased. The bias is large for small ensembles and vanishes as $T\to\infty$. We remove it with \emph{size-matched extrapolation}. Each estimator is recomputed with source and target scores produced by ensembles of identical size $m$, over a grid of sizes. The resulting curve is then extrapolated to $m=T$ using the known $O(1/m)$ convergence of randomized ensembles \citep{ng2001voting,lopes2016sharp,cannings2017rp,lopes2019aos}. We also identify a practical pitfall: tree-vote confidences are discrete, so threshold-based estimators such as ATC need randomized tie-breaking.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\item We formalize the OOB sample of a bagged ensemble as a \emph{free reference set} for label-free accuracy estimation under shift. We characterize precisely which model it is a held-out sample for (Proposition~\ref{prop:oob}).
+\item We propose size-matched, $1/m$-extrapolated OOB versions of four estimator families (plain, DoC, ATC, importance weighting). We also propose an OOB domain classifier that yields cross-fitted density ratios without data splitting.
+\item We report a pre-registered empirical study with 5{,}212 estimation tasks. It covers 40 synthetic task families, all 72 real datasets of the OpenML-CC18 benchmark suite \citep{bischl2021openml} plus three small real datasets, four shift types at several severities, and sweeps over ensemble size and sample size, for random forests and Extra-Trees.
+\item We report, including where our hypotheses were refuted, when each component helps. The free reference set gives statistically robust gains on synthetic and real data, largest for small datasets and smallest under corruption shift. Extrapolation matters mainly for small ensembles and for threshold-based estimators.
+\end{enumerate}
+
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Label-free accuracy estimation.}
+Confidence-based estimators predict target accuracy from the model's scores on unlabeled target data. Average confidence (AC) is the simplest and requires perfect calibration. DoC \citep{guillory2021doc} corrects AC by the gap between source and target confidence. ATC \citep{garg2022atc} learns a confidence threshold on labeled source data and reports the fraction of target points above it. Disagreement-based methods \citep{jiang2022gde,baek2022aotl,kirsch2022note} relate the agreement of independently trained models to their accuracy. Regression-on-features methods train a meta-model across many shifted datasets \citep{deng2021labels}. Mandoline \citep{chen2021mandoline} uses user-specified slicing functions for importance reweighting. For tabular data, \citet{bialek2025pape} recently proposed PAPE, which combines density-ratio estimation with calibration on a labeled reference set. They benchmarked it against ATC, DoC, confidence-based performance estimation and importance weighting on 959 dataset--model pairs derived from US census data \citep{ding2021folktables}. Every one of these methods needs a labeled reference set or a collection of labeled shifted datasets; our contribution is orthogonal and makes the reference set free for bagged models.
+
+\paragraph{Covariate shift and importance weighting.}
+Under covariate shift, $p(y\mid x)$ is invariant, and the target risk can be estimated by reweighting source losses with the density ratio $w(x)=q(x)/p(x)$ \citep{shimodaira2000,sugiyama2007iwcv}. The ratio is commonly estimated with a probabilistic domain classifier \citep{rabanser2019failing}. Under label shift, $p(x\mid y)$ is invariant instead \citep{lipton2018bbse}. Under support shift, such as corruptions \citep{hendrycks2019corruptions}, neither assumption holds.
+
+\paragraph{Out-of-bag estimation and randomized ensembles.}
+OOB estimation dates to \citet{breiman1996oob} and \citet{breiman2001rf}. It has been used for variance estimation \citep{wager2014ij} and for conformal prediction via the jackknife+-after-bootstrap \citep{kim2020jab}, always for in-distribution guarantees. The convergence of a randomized ensemble's error to its infinite-ensemble limit has been studied by \citet{ng2001voting}, \citet{lopes2016sharp}, \citet{cannings2017rp} and \citet{lopes2019aos}. These works show that the expected excess error decays at the fast rate $1/t$ in the number of members under various conditions. We exploit this rate for Richardson-type extrapolation \citep{richardson1911} of shift-aware estimators.
+
+\section{Problem setup}
+\label{sec:setup}
+
+Let $P$ and $Q$ be source and target distributions on $\mathcal X\times\{1,\dots,K\}$. We observe a labeled source sample $S=\{(x_i,y_i)\}_{i=1}^n\sim P^n$ and an unlabeled target sample $X^Q=\{\tilde x_j\}_{j=1}^{n_Q}\sim Q_X^{n_Q}$. A bagged ensemble consists of $T$ base learners $h_1,\dots,h_T$. Learner $h_t$ is trained on a bootstrap multiset $B_t$ of $n$ draws from $S$, with internal randomness $\theta_t$, and outputs a probability vector $h_t(x)\in\Delta^{K-1}$. For an index set $U\subseteq\{1,\dots,T\}$ we write $\bar h_U(x)=|U|^{-1}\sum_{t\in U}h_t(x)$, $f_U(x)=\arg\max_k \bar h_{U,k}(x)$ and $c_U(x)=\max_k\bar h_{U,k}(x)$ (the confidence). The deployed model is $f_{[T]}$. The estimand is its target accuracy,
+\begin{equation}
+\Acc_Q(f_{[T]})=\Pr_{(x,y)\sim Q}\big[f_{[T]}(x)=y\big].
+\end{equation}
+A \emph{reference-set estimator} $\Phi$ maps labeled reference scores $\{(c(x_i),\mathbb 1[f(x_i)=y_i])\}$ and unlabeled target scores $\{c(\tilde x_j)\}$ (and possibly the covariates themselves) to an accuracy estimate. We consider four families:
+\begin{align*}
+\text{plain:}\quad &\hat a=\textstyle\frac1{n_r}\sum_i \mathbb 1[f(x_i)=y_i],\\
+\text{DoC:}\quad &\hat a-\big(\overline{c(x_i)}-\overline{c(\tilde x_j)}\big),\\
+\text{ATC:}\quad &\textstyle\frac1{n_Q}\sum_j \mathbb 1[c(\tilde x_j)>\tau],\ \ \tau:\ \tfrac1{n_r}\textstyle\sum_i \mathbb 1[c(x_i)>\tau]=\hat a,\\
+\text{IW:}\quad &\textstyle\sum_i \hat w(x_i)\,\mathbb 1[f(x_i)=y_i]\big/\sum_i\hat w(x_i),
+\end{align*}
+where $\hat w$ estimates $q(x)/p(x)$. The standard \emph{holdout} route (HO) trains the ensemble on a fraction $1-\rho$ of $S$ and uses the remaining $\rho n$ points as the reference set. Its estimand is the accuracy of that smaller-data model.
+
+\section{Method}
+\label{sec:method}
+
+\subsection{The OOB sample is a free reference set, for a smaller model}
+
+Let $O_i=\{t: i\notin B_t\}$ be the set of learners for which point $i$ is out of bag, and let $f^{\oob}(x_i)=f_{O_i}(x_i)$.
+
+\begin{proposition}[What OOB scores are a held-out sample of]
+\label{prop:oob}
+Fix $i$ and condition on $|O_i|=m\ge1$. Then the learners $\{h_t\}_{t\in O_i}$ are i.i.d.\ draws of a learner trained on $n$ uniform draws from $S_{-i}=S\setminus\{(x_i,y_i)\}$, and they are independent of $(x_i,y_i)$ given $S_{-i}$. Consequently, for any bounded function $g$ of the confidence and correctness,
+\[
+\E\big[g\big(c_{O_i}(x_i),\mathbb 1[f_{O_i}(x_i)=y_i]\big)\,\big|\,|O_i|=m\big]=\E_{(x,y)\sim P}\big[g\big(c_{U_m}(x),\mathbb 1[f_{U_m}(x)=y]\big)\big],
+\]
+where $U_m$ is an $m$-member ensemble trained on a sample of size $n-1$. Moreover, $|O_i|\sim\mathrm{Bin}(T,(1-1/n)^n)$, whose mean is $\approx T/e$.
+\end{proposition}
+\begin{proof}[Proof sketch]
+Conditional on $i\notin B_t$, each of the $n$ draws that form $B_t$ is uniform on the remaining $n-1$ indices, and the draws are independent across draws and across learners. The learners' internal randomness $\theta_t$ is independent of the data. Hence $\{h_t\}_{t\in O_i}$ depends on $S$ only through $S_{-i}$, and $(x_i,y_i)\sim P$ is a fresh draw relative to them. The binomial law follows because the events $\{i\notin B_t\}$ are independent across $t$, each with probability $(1-1/n)^n$.
+\end{proof}
+
+Proposition~\ref{prop:oob} says that the OOB sample is an exact (leave-one-out) reference sample for \emph{an $m$-member ensemble}, with $m$ random and concentrated near $T/e$. Two discrepancies separate it from the deployed model: training-set size $n-1$ versus $n$, which is negligible, and ensemble size $m$ versus $T$, which is not negligible for moderate $T$. The size discrepancy affects reference-set estimators through two channels. First, the reference accuracy $\hat a$ underestimates the full ensemble's accuracy. Second, the reference confidences are systematically lower and more dispersed than the target confidences produced by the full ensemble. Both channels corrupt DoC and ATC. Only the first corrupts plain and IW estimators.
+
+\subsection{Size-matched extrapolation}
+
+To remove the size discrepancy, we evaluate every estimator at a common ensemble size on both sides and extrapolate in $1/m$.
+
+\begin{assumption}[$1/m$ expansion]
+\label{ass:rate}
+For estimator family $\Phi$, let $\phi(m)=\E[\Phi_m]$, where $\Phi_m$ is computed with source scores from size-$m$ OOB sub-ensembles and target scores from size-$m$ random sub-ensembles. Then $\phi(m)=\phi_\infty+b/m+r(m)$ with $|r(m)|\le C/m^2$.
+\end{assumption}
+For the plain family, Assumption~\ref{ass:rate} is the fast $1/t$ convergence of the expected error of randomized ensembles established under various conditions in \citep{ng2001voting,lopes2016sharp,cannings2017rp}. For the other families we verify it empirically (Section~\ref{sec:mech}).
+
+\begin{algorithm}[t]
+\caption{Size-matched, $1/m$-extrapolated OOB estimation (OOB-$\Phi$-X)}
+\label{alg:x}
+\begin{algorithmic}[1]
+\Require bagged ensemble $\{h_t\}_{t=1}^T$ with OOB sets $\{O_i\}$; labeled source $S$; unlabeled target $X^Q$; estimator family $\Phi$; repetitions $R$; grid size $G$
+\State $m_{\max}\gets$ 10th percentile of $\{|O_i|\}$; grid $\mathcal M\gets$ $G$ integers equally spaced in $[m_{\max}/4,\,m_{\max}]$
+\For{$m\in\mathcal M$}
+  \For{$r=1,\dots,R$}
+    \State for each $i$ with $|O_i|\ge m$: draw $U_i\subset O_i$ with $|U_i|=m$; record $c_{U_i}(x_i)$ and $\mathbb 1[f_{U_i}(x_i)=y_i]$
+    \State for each target $j$: draw $V_j\subset[T]$ with $|V_j|=m$; record $c_{V_j}(\tilde x_j)$
+    \State add tie-breaking jitter $\epsilon\sim U(0,10^{-7})$ to all confidences; compute $\Phi_{m,r}$
+  \EndFor
+  \State $\bar\Phi_m\gets R^{-1}\sum_r\Phi_{m,r}$
+\EndFor
+\State fit $(\hat\phi_\infty,\hat b)=\arg\min\sum_{m\in\mathcal M}(\bar\Phi_m-\phi_\infty-b/m)^2$
+\State \Return $\mathrm{clip}_{[0,1]}(\hat\phi_\infty+\hat b/T)$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{proposition}[Bias of naive versus extrapolated OOB estimators]
+\label{prop:bias}
+Under Assumption~\ref{ass:rate}, ignoring the $n-1$ versus $n$ discrepancy and sampling noise:
+\begin{enumerate}
+\item[(i)] the naive OOB plug-in for the plain and IW families has bias $b\,(\E[1/|O_i|]-1/T)=b\,(e-1)/T+O(T^{-2})$;
+\item[(ii)] the extrapolated estimator of Algorithm~\ref{alg:x} has bias $O(m_{\min}^{-2})=O(T^{-2})$, because least squares on the grid recovers $\phi_\infty$ and $b$ up to the $O(m^{-2})$ remainder.
+\end{enumerate}
+\end{proposition}
+\noindent For a given source sample, the sub-ensemble evaluations reuse the same trees, so Algorithm~\ref{alg:x} needs no refitting. Its cost is $O(GRT(n+n_Q))$ vector operations on cached per-tree probabilities, which is negligible relative to training.
+
+\paragraph{Randomized tie-breaking.}
+Fully grown trees output one-hot probability vectors, so $c_U(x)$ takes values in $\{1/m,2/m,\dots,1\}$. With ties, the ATC threshold equation generally has no exact solution, and the strict inequality in ATC introduces a bias that grows as $m$ shrinks. Adding a negligible uniform jitter to every confidence implements randomized tie-breaking, which is the standard way to handle discreteness in quantile matching. In pilot experiments this also reduced the bias of the classic holdout ATC.
+
+\paragraph{OOB importance weights.}
+For the IW family we train a random-forest domain classifier to separate source from target covariates. We take its \emph{OOB} probabilities $\hat\pi(x_i)$ on source points, which yields cross-fitted density ratios without sample splitting: $\hat w(x_i)=\frac{\hat\pi(x_i)}{1-\hat\pi(x_i)}\cdot\frac{n}{n_Q}$, clipped at 20 and normalized to mean 1. The same construction is used for the holdout route, applied to its reference set, so the comparison isolates the effect of the reference set.
+
+\paragraph{Variance.}
+Beyond bias, the OOB route enlarges the reference set from $\rho n$ to $n$ points. For the plain family the variance of the reference accuracy falls by a factor of roughly $\rho$ (OOB predictions are weakly dependent through shared trees, so this is approximate). For IW the gain is larger, because density-ratio weights inflate variance by the effective-sample-size factor $(\sum w)^2/\sum w^2$.

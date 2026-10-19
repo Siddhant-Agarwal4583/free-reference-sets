@@ -1,0 +1,29 @@
+\appendix
+\section{Implementation details}
+\label{app:impl}
+\paragraph{Forests.} scikit-learn~1.9 \texttt{RandomForestClassifier} and \texttt{ExtraTreesClassifier(bootstrap=True)} with default hyperparameters (fully grown trees, $\sqrt d$ candidate features per split, Gini impurity). OOB membership is read from \texttt{estimators\_samples\_}.
+\paragraph{Domain classifier.} A random forest with 200 trees and \texttt{min\_samples\_leaf}$=5$, trained to separate source ($0$) from target ($1$) covariates; source-point probabilities are its OOB probabilities, clipped to $[10^{-3},1-10^{-3}]$; weights are clipped at 20 and normalized to mean one. The same procedure is used for HO-IW on the holdout reference set.
+\paragraph{Extrapolation.} $m_{\max}$ is the 10th percentile of OOB counts, so that 90\% of source points contribute at every grid size; the grid contains $G=5$ integers equally spaced in $[m_{\max}/4,m_{\max}]$ (duplicates removed); $R=8$ repetitions; jitter $\epsilon\sim U(0,10^{-7})$. Final estimates are clipped to $[0,1]$.
+\paragraph{Synthetic task families.} Family $c\in\{0,\dots,39\}$ draws its generator parameters from a random generator seeded with $1000+c$: $d\sim U\{10,\dots,40\}$, $K\sim U\{2,\dots,5\}$, informative features $\max(\lceil\log_2 2K\rceil+1,\lfloor u d\rfloor)$ with $u\sim U(0.2,0.6)$, redundant features $\sim U\{0,\dots,\lfloor(d-\text{inf})/2\rfloor-1\}$, clusters per class $\sim U\{1,2\}$, class separation $\sim U(0.6,1.6)$, label-flip rate $\sim U(0,0.08)$.
+\paragraph{Compute.} The 3{,}700 synthetic and small-real-data tasks ran on two CPU cores in about three hours of wall-clock time; the 1{,}512 OpenML-CC18 tasks ran on a two-core Google Colab instance in about four hours.
+
+\section{Additional results}
+\begin{table}[h]
+\centering\small
+\caption{Main benchmark MAE (pp) by shift condition and severity.}
+\label{tab:levels}
+\begin{tabular}{lccccccc}
+\toprule
+Estimator & IID & Cov.\,$\alpha{=}1$ & Cov.\,$\alpha{=}2$ & Cov.\,$\alpha{=}3$ & Corr.\,$s{=}0.5$ & Corr.\,$s{=}1$ & Label \\
+\midrule
+HO & 3.32 & 4.68 & 7.44 & 12.14 & 7.29 & 16.46 & 4.07 \\
+HO\mbox{-}DoC & 3.37 & 4.00 & 5.06 & 8.06 & 4.75 & 7.38 & 3.82 \\
+HO\mbox{-}ATC & 4.08 & 5.36 & 8.09 & 11.54 & 6.50 & 11.51 & 4.48 \\
+HO\mbox{-}IW & 5.82 & 6.90 & 9.70 & 13.29 & 8.56 & 18.00 & 6.91 \\
+OOB\mbox{-}X & 1.80 & 2.99 & 5.88 & 10.25 & 5.74 & 16.63 & 2.63 \\
+OOB\mbox{-}DoC\mbox{-}X & \textbf{1.74} & \textbf{2.72} & 4.39 & \textbf{6.34} & \textbf{2.80} & \textbf{6.48} & \textbf{2.45} \\
+OOB\mbox{-}ATC\mbox{-}X & 2.11 & 3.14 & 6.32 & 9.95 & 4.33 & 9.09 & 2.48 \\
+OOB\mbox{-}IW\mbox{-}X & 2.24 & 3.20 & \textbf{4.28} & 6.36 & 5.52 & 16.79 & 2.79 \\
+\bottomrule
+\end{tabular}
+\end{table}

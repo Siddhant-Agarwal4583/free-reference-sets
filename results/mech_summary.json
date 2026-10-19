@@ -1,0 +1,6 @@
+{
+ "median_R2_target": 0.9862014966292418,
+ "frac_R2_gt_0.9": 0.9583333333333334,
+ "MAE_extrap_vs_full_pp": 0.2757085628242966,
+ "MAE_raw_at_hi_vs_full_pp": 0.5381944444444435
+}

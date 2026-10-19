@@ -1,0 +1,38 @@
+\section{Experimental protocol}
+\label{sec:protocol}
+
+\paragraph{Pre-registration.}
+Before running the main experiments we recorded five hypotheses (included in the supplementary material):
+\textbf{H1} naive OOB plug-ins are biased because of the ensemble-size mismatch, the bias shrinks with $T$, and size matching removes it;
+\textbf{H2} each OOB estimator has lower absolute error than its holdout counterpart, most of all at small $n$;
+\textbf{H3} the OOB-route model is more accurate on the target than the holdout-route model;
+\textbf{H4} IW is best under sub-population covariate shift, confidence-based methods are best under corruption, and all methods degrade under label shift;
+\textbf{H5} the conclusions transfer from random forests to bootstrapped Extra-Trees.
+H1 originally attributed the bias to the \emph{confidence} mismatch alone. Pilot experiments showed that the \emph{accuracy} mismatch dominates, which led to the extrapolation step. We report this as a refinement of H1 rather than hiding it.
+
+\paragraph{Tasks.}
+\emph{Synthetic.} We use 40 task families drawn at random from scikit-learn's \texttt{make\_classification} generator \citep{pedregosa2011sklearn}. They have 10--40 features (20--60\% informative), 2--5 classes, 1--2 clusters per class, class separation in $[0.6,1.6]$ and label-noise rate in $[0,0.08]$. Each family provides a pool of 12{,}000 points.
+\emph{Real (small).} We use the three multi-dimensional classification datasets bundled with scikit-learn: Breast Cancer Wisconsin ($n=569$, $d=30$, $K=2$), Digits ($n=1797$, $d=64$, $K=10$) and Wine ($n=178$, $d=13$, $K=3$).
+\emph{Real (large-scale).} We use all 72 datasets of the OpenML-CC18 benchmark suite \citep{bischl2021openml}. Categorical features are ordinal-encoded and missing values mean-imputed; datasets with more than 20{,}000 instances are subsampled to 20{,}000. Source and target samples each contain $\min(2000,\lfloor N/2\rfloor)$ points, which gives source sizes between 250 and 2{,}000 (median 1{,}104). Target classes absent from the source are dropped.
+All features are standardized.
+
+\paragraph{Shifts.}
+(i) \emph{IID}: random split.
+(ii) \emph{Covariate (sub-population) shift}: with $z$ the standardized first principal-component score, each point goes to the source with probability $\sigma(-\alpha z)$ and to the target otherwise, for $\alpha\in\{1,2,3\}$. Here $p(y\mid x)$ is invariant, but the overlap shrinks as $\alpha$ grows.
+(iii) \emph{Corruption}: additive Gaussian noise of standard deviation $s\in\{0.5,1.0\}$ on the target features, a tabular analogue of common corruptions \citep{hendrycks2019corruptions}.
+(iv) \emph{Label shift}: the target is resampled to class priors $0.3\,p_0+0.7\,\pi$, with $\pi\sim\mathrm{Dir}(\bm 1)$.
+
+\paragraph{Models and estimators.}
+Random forests use scikit-learn defaults (fully grown trees, $\sqrt d$ features per split) with $T=200$ unless stated otherwise. The holdout route uses a stratified $\rho=20\%$ reference split. For each family $\Phi\in\{$plain, DoC, ATC, IW$\}$ we compare three variants: HO-$\Phi$ (holdout), OOB-$\Phi$ (naive OOB plug-in) and OOB-$\Phi$-X (Algorithm~\ref{alg:x}, $G=5$, $R=8$). We also report average confidence (AC). Each estimator is scored against the true target accuracy of the model \emph{its own route deploys}.
+
+\paragraph{Experiments.}
+\textbf{Main}: 40 families $\times$ 7 shift conditions $\times$ $n\in\{200,1000\}$ $\times$ 3 seeds $=1{,}680$ tasks, with $n_Q=2{,}000$.
+\textbf{Ensemble-size sweep}: 20 families $\times$ \{IID, covariate $\alpha{=}2$, corruption $s{=}1$\} $\times$ $T\in\{25,50,100,200,500\}$ $\times$ 2 seeds $=600$ tasks, with $n=500$.
+\textbf{Sample-size sweep}: 20 families $\times$ the same 3 shifts $\times$ $n\in\{100,\dots,3200\}$ $\times$ 2 seeds $=720$ tasks.
+\textbf{Real (small)}: 3 datasets $\times$ 7 shift conditions $\times$ 20 seeds $=420$ tasks; the pool is split in half between source and target.
+\textbf{OpenML-CC18}: 72 datasets $\times$ 7 shift conditions $\times$ 3 seeds $=1{,}512$ tasks, with $T=200$.
+\textbf{Extra-Trees}: 20 families $\times$ 7 shift conditions $\times$ 2 seeds $=280$ tasks, with $n=1000$.
+\textbf{Mechanism}: 12 families $\times$ \{IID, covariate\} with $T=500$, using target labels for diagnosis only.
+
+\paragraph{Metrics and statistics.}
+The primary metric is the absolute estimation error $|\hat a-a|$ in percentage points (pp); we also report signed bias. Paired comparisons use the two-sided Wilcoxon signed-rank test over tasks; for OpenML-CC18 we additionally test over \emph{datasets}, after averaging each dataset's tasks, which is the more conservative unit \citep{demsar2006}. All tests use Holm correction across the eight planned comparisons. Overall rankings use Friedman average ranks \citep{demsar2006}. All code, raw per-task results and the analysis scripts are released.

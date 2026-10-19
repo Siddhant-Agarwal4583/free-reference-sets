@@ -1,0 +1,196 @@
+\begin{thebibliography}{29}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Baek et~al.(2022)Baek, Jiang, Raghunathan, and Kolter]{baek2022aotl}
+Christina Baek, Yiding Jiang, Aditi Raghunathan, and J.~Zico Kolter.
+\newblock Agreement-on-the-line: Predicting the performance of neural networks
+  under distribution shift.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2022.
+
+\bibitem[Bia{\l}ek et~al.(2025)Bia{\l}ek, Kivim{\"a}ki, Kuberski, and
+  Perrakis]{bialek2025pape}
+Jakub Bia{\l}ek, Juhani Kivim{\"a}ki, Wojciech Kuberski, and Nikolaos Perrakis.
+\newblock Estimating model performance under covariate shift without labels.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2025.
+
+\bibitem[Bischl et~al.(2021)Bischl, Casalicchio, Feurer, Gijsbers, Hutter,
+  Lang, Mantovani, van Rijn, and Vanschoren]{bischl2021openml}
+Bernd Bischl, Giuseppe Casalicchio, Matthias Feurer, Pieter Gijsbers, Frank
+  Hutter, Michel Lang, Rafael~G. Mantovani, Jan~N. van Rijn, and Joaquin
+  Vanschoren.
+\newblock {OpenML} benchmarking suites.
+\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS),
+  Datasets and Benchmarks Track}, 2021.
+
+\bibitem[Breiman(1996)]{breiman1996oob}
+Leo Breiman.
+\newblock Out-of-bag estimation.
+\newblock Technical report, Department of Statistics, University of California,
+  Berkeley, 1996.
+
+\bibitem[Breiman(2001)]{breiman2001rf}
+Leo Breiman.
+\newblock Random forests.
+\newblock \emph{Machine Learning}, 45\penalty0 (1):\penalty0 5--32, 2001.
+
+\bibitem[Cannings and Samworth(2017)]{cannings2017rp}
+Timothy~I. Cannings and Richard~J. Samworth.
+\newblock Random-projection ensemble classification.
+\newblock \emph{Journal of the Royal Statistical Society: Series B},
+  79\penalty0 (4):\penalty0 959--1035, 2017.
+
+\bibitem[Chen et~al.(2021)Chen, Goel, Sohoni, Poms, Fatahalian, and
+  R{\'e}]{chen2021mandoline}
+Mayee Chen, Karan Goel, Nimit~S. Sohoni, Fait Poms, Kayvon Fatahalian, and
+  Christopher R{\'e}.
+\newblock Mandoline: Model evaluation under distribution shift.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2021.
+
+\bibitem[Dem{\v{s}}ar(2006)]{demsar2006}
+Janez Dem{\v{s}}ar.
+\newblock Statistical comparisons of classifiers over multiple data sets.
+\newblock \emph{Journal of Machine Learning Research}, 7:\penalty0 1--30, 2006.
+
+\bibitem[Deng and Zheng(2021)]{deng2021labels}
+Weijian Deng and Liang Zheng.
+\newblock Are labels always necessary for classifier accuracy evaluation?
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR)}, 2021.
+
+\bibitem[Ding et~al.(2021)Ding, Hardt, Miller, and Schmidt]{ding2021folktables}
+Frances Ding, Moritz Hardt, John Miller, and Ludwig Schmidt.
+\newblock Retiring adult: New datasets for fair machine learning.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2021.
+
+\bibitem[Garg et~al.(2022)Garg, Balakrishnan, Lipton, Neyshabur, and
+  Sedghi]{garg2022atc}
+Saurabh Garg, Sivaraman Balakrishnan, Zachary~C. Lipton, Behnam Neyshabur, and
+  Hanie Sedghi.
+\newblock Leveraging unlabeled data to predict out-of-distribution performance.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2022.
+
+\bibitem[Geurts et~al.(2006)Geurts, Ernst, and Wehenkel]{geurts2006et}
+Pierre Geurts, Damien Ernst, and Louis Wehenkel.
+\newblock Extremely randomized trees.
+\newblock \emph{Machine Learning}, 63\penalty0 (1):\penalty0 3--42, 2006.
+
+\bibitem[Grinsztajn et~al.(2022)Grinsztajn, Oyallon, and
+  Varoquaux]{grinsztajn2022tabular}
+L{\'e}o Grinsztajn, Edouard Oyallon, and Ga{\"e}l Varoquaux.
+\newblock Why do tree-based models still outperform deep learning on typical
+  tabular data?
+\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS),
+  Datasets and Benchmarks Track}, 2022.
+
+\bibitem[Guillory et~al.(2021)Guillory, Shankar, Ebrahimi, Darrell, and
+  Schmidt]{guillory2021doc}
+Devin Guillory, Vaishaal Shankar, Sayna Ebrahimi, Trevor Darrell, and Ludwig
+  Schmidt.
+\newblock Predicting with confidence on unseen distributions.
+\newblock In \emph{Proceedings of the IEEE/CVF International Conference on
+  Computer Vision (ICCV)}, pages 1134--1144, 2021.
+
+\bibitem[Hendrycks and Dietterich(2019)]{hendrycks2019corruptions}
+Dan Hendrycks and Thomas Dietterich.
+\newblock Benchmarking neural network robustness to common corruptions and
+  perturbations.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2019.
+
+\bibitem[Jiang et~al.(2022)Jiang, Nagarajan, Baek, and Kolter]{jiang2022gde}
+Yiding Jiang, Vaishnavh Nagarajan, Christina Baek, and J.~Zico Kolter.
+\newblock Assessing generalization of {SGD} via disagreement.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2022.
+
+\bibitem[Kim et~al.(2020)Kim, Xu, and Barber]{kim2020jab}
+Byol Kim, Chen Xu, and Rina~Foygel Barber.
+\newblock Predictive inference is free with the jackknife+-after-bootstrap.
+\newblock \emph{Advances in Neural Information Processing Systems (NeurIPS)},
+  2020.
+
+\bibitem[Kirsch and Gal(2022)]{kirsch2022note}
+Andreas Kirsch and Yarin Gal.
+\newblock A note on ``assessing generalization of {SGD} via disagreement''.
+\newblock \emph{Transactions on Machine Learning Research}, 2022.
+
+\bibitem[Lipton et~al.(2018)Lipton, Wang, and Smola]{lipton2018bbse}
+Zachary~C. Lipton, Yu-Xiang Wang, and Alexander~J. Smola.
+\newblock Detecting and correcting for label shift with black box predictors.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2018.
+
+\bibitem[Lopes(2016)]{lopes2016sharp}
+Miles~E. Lopes.
+\newblock A sharp bound on the computation-accuracy tradeoff for majority
+  voting ensembles.
+\newblock \emph{arXiv preprint arXiv:1303.0727}, 2016.
+
+\bibitem[Lopes(2019)]{lopes2019aos}
+Miles~E. Lopes.
+\newblock Estimating the algorithmic variance of randomized ensembles via the
+  bootstrap.
+\newblock \emph{The Annals of Statistics}, 47\penalty0 (2), 2019.
+
+\bibitem[Ng and Jordan(2001)]{ng2001voting}
+Andrew~Y. Ng and Michael~I. Jordan.
+\newblock Convergence rates of the voting {G}ibbs classifier, with application
+  to {B}ayesian feature selection.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2001.
+
+\bibitem[Niculescu-Mizil and Caruana(2005)]{niculescu2005probs}
+Alexandru Niculescu-Mizil and Rich Caruana.
+\newblock Predicting good probabilities with supervised learning.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, pages
+  625--632, 2005.
+
+\bibitem[Pedregosa et~al.(2011)]{pedregosa2011sklearn}
+Fabian Pedregosa et~al.
+\newblock Scikit-learn: Machine learning in {P}ython.
+\newblock \emph{Journal of Machine Learning Research}, 12:\penalty0 2825--2830,
+  2011.
+
+\bibitem[Rabanser et~al.(2019)Rabanser, G{\"u}nnemann, and
+  Lipton]{rabanser2019failing}
+Stephan Rabanser, Stephan G{\"u}nnemann, and Zachary~C. Lipton.
+\newblock Failing loudly: An empirical study of methods for detecting dataset
+  shift.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2019.
+
+\bibitem[Richardson(1911)]{richardson1911}
+Lewis~Fry Richardson.
+\newblock The approximate arithmetical solution by finite differences of
+  physical problems involving differential equations.
+\newblock \emph{Philosophical Transactions of the Royal Society A},
+  210:\penalty0 307--357, 1911.
+
+\bibitem[Shimodaira(2000)]{shimodaira2000}
+Hidetoshi Shimodaira.
+\newblock Improving predictive inference under covariate shift by weighting the
+  log-likelihood function.
+\newblock \emph{Journal of Statistical Planning and Inference}, 90\penalty0
+  (2):\penalty0 227--244, 2000.
+
+\bibitem[Sugiyama et~al.(2007)Sugiyama, Krauledat, and
+  M{\"u}ller]{sugiyama2007iwcv}
+Masashi Sugiyama, Matthias Krauledat, and Klaus-Robert M{\"u}ller.
+\newblock Covariate shift adaptation by importance weighted cross validation.
+\newblock \emph{Journal of Machine Learning Research}, 8:\penalty0 985--1005,
+  2007.
+
+\bibitem[Wager et~al.(2014)Wager, Hastie, and Efron]{wager2014ij}
+Stefan Wager, Trevor Hastie, and Bradley Efron.
+\newblock Confidence intervals for random forests: The jackknife and the
+  infinitesimal jackknife.
+\newblock \emph{Journal of Machine Learning Research}, 15:\penalty0 1625--1651,
+  2014.
+
+\end{thebibliography}

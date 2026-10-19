@@ -1,0 +1,168 @@
+{
+ "mae_by_n": {
+  "200": {
+   "HO": 9.33,
+   "HO-ATC": 8.77,
+   "HO-DoC": 6.74,
+   "HO-IW": 12.93,
+   "OOB-ATC-X": 5.44,
+   "OOB-DoC-X": 4.51,
+   "OOB-IW-X": 6.51,
+   "OOB-X": 7.28
+  },
+  "1000": {
+   "HO": 6.49,
+   "HO-ATC": 5.97,
+   "HO-DoC": 3.67,
+   "HO-IW": 6.83,
+   "OOB-ATC-X": 5.25,
+   "OOB-DoC-X": 3.18,
+   "OOB-IW-X": 5.25,
+   "OOB-X": 5.85
+  }
+ },
+ "mae_by_level": {
+  "corrupt@0.5": {
+   "HO": 7.29,
+   "HO-ATC": 6.5,
+   "HO-DoC": 4.75,
+   "HO-IW": 8.56,
+   "OOB-ATC-X": 4.33,
+   "OOB-DoC-X": 2.8,
+   "OOB-IW-X": 5.52,
+   "OOB-X": 5.74
+  },
+  "corrupt@1.0": {
+   "HO": 16.46,
+   "HO-ATC": 11.51,
+   "HO-DoC": 7.38,
+   "HO-IW": 18.0,
+   "OOB-ATC-X": 9.09,
+   "OOB-DoC-X": 6.48,
+   "OOB-IW-X": 16.79,
+   "OOB-X": 16.63
+  },
+  "cov@1.0": {
+   "HO": 4.68,
+   "HO-ATC": 5.36,
+   "HO-DoC": 4.0,
+   "HO-IW": 6.9,
+   "OOB-ATC-X": 3.14,
+   "OOB-DoC-X": 2.72,
+   "OOB-IW-X": 3.2,
+   "OOB-X": 2.99
+  },
+  "cov@2.0": {
+   "HO": 7.44,
+   "HO-ATC": 8.09,
+   "HO-DoC": 5.06,
+   "HO-IW": 9.7,
+   "OOB-ATC-X": 6.32,
+   "OOB-DoC-X": 4.39,
+   "OOB-IW-X": 4.28,
+   "OOB-X": 5.88
+  },
+  "cov@3.0": {
+   "HO": 12.14,
+   "HO-ATC": 11.54,
+   "HO-DoC": 8.06,
+   "HO-IW": 13.29,
+   "OOB-ATC-X": 9.95,
+   "OOB-DoC-X": 6.34,
+   "OOB-IW-X": 6.36,
+   "OOB-X": 10.25
+  },
+  "iid@0.0": {
+   "HO": 3.32,
+   "HO-ATC": 4.08,
+   "HO-DoC": 3.37,
+   "HO-IW": 5.82,
+   "OOB-ATC-X": 2.11,
+   "OOB-DoC-X": 1.74,
+   "OOB-IW-X": 2.24,
+   "OOB-X": 1.8
+  },
+  "label@0.7": {
+   "HO": 4.07,
+   "HO-ATC": 4.48,
+   "HO-DoC": 3.82,
+   "HO-IW": 6.91,
+   "OOB-ATC-X": 2.48,
+   "OOB-DoC-X": 2.45,
+   "OOB-IW-X": 2.79,
+   "OOB-X": 2.63
+  }
+ },
+ "monitoring": [
+  {
+   "estimator": "HO",
+   "auroc": 0.486,
+   "prevalence": 0.4785,
+   "spearman": -0.0271
+  },
+  {
+   "estimator": "HO-DoC",
+   "auroc": 0.6998,
+   "prevalence": 0.4785,
+   "spearman": 0.4222
+  },
+  {
+   "estimator": "HO-ATC",
+   "auroc": 0.8095,
+   "prevalence": 0.4785,
+   "spearman": 0.6248
+  },
+  {
+   "estimator": "HO-IW",
+   "auroc": 0.5342,
+   "prevalence": 0.4785,
+   "spearman": 0.0526
+  },
+  {
+   "estimator": "OOB-X",
+   "auroc": 0.4925,
+   "prevalence": 0.466,
+   "spearman": -0.0249
+  },
+  {
+   "estimator": "OOB-DoC-X",
+   "auroc": 0.7913,
+   "prevalence": 0.466,
+   "spearman": 0.5889
+  },
+  {
+   "estimator": "OOB-ATC-X",
+   "auroc": 0.9078,
+   "prevalence": 0.466,
+   "spearman": 0.7955
+  },
+  {
+   "estimator": "OOB-IW-X",
+   "auroc": 0.5688,
+   "prevalence": 0.466,
+   "spearman": 0.1355
+  }
+ ],
+ "within": {
+  "w2": {
+   "HO": 0.2256,
+   "HO-ATC": 0.2256,
+   "HO-DoC": 0.3065,
+   "HO-IW": 0.1738,
+   "OOB-ATC-X": 0.3411,
+   "OOB-DoC-X": 0.394,
+   "OOB-IW-X": 0.3446,
+   "OOB-X": 0.3214
+  },
+  "w5": {
+   "HO": 0.4661,
+   "HO-ATC": 0.4905,
+   "HO-DoC": 0.6149,
+   "HO-IW": 0.3815,
+   "OOB-ATC-X": 0.6226,
+   "OOB-DoC-X": 0.7256,
+   "OOB-IW-X": 0.5982,
+   "OOB-X": 0.5524
+  }
+ }
+}
