@@ -26,12 +26,9 @@ python analyze.py all && python paper_stats.py
 cd paper && latexmk -pdf main.tex
 ```
 
-## Strongly recommended before submission
 ```bash
 pip install openml
 python bench_openml.py --jobs 2 --seeds 3   # 72 datasets x 7 shifts x 3 seeds, resumable
 # or open run_openml_colab.ipynb in Google Colab (no installation needed)
 python analyze.py openml
 ```
-Then add the OpenML results as a main real-data section (the current real-data evidence uses
-only 3 small scikit-learn datasets, which reviewers will flag).
